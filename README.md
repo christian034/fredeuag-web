@@ -205,6 +205,7 @@ Abre http://localhost:4200
 - Reemplazar noticias, galería e información de ejemplo desde `/admin/contenido`.
 - Reemplazar los links de redes sociales en la pestaña Contacto del panel.
 - Instalar y configurar la extensión "Trigger Email from Firestore".
+- 
 - Si quieres blindar el flujo de aprobación también a nivel de reglas de Firestore (no solo en la
   interfaz), considera mover las noticias a su propio documento por ítem, como ya son las secciones.
 - Considera, más adelante, migrar Angular a versiones más nuevas de forma gradual (una versión mayor
