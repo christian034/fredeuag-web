@@ -1,0 +1,204 @@
+<app-admin-nav></app-admin-nav>
+
+<main class="bg-base min-h-screen px-6 md:px-16 pb-16 text-bone" *ngIf="auth.permisos$ | async as permisos">
+  <h1 class="font-display text-3xl md:text-4xl font-medium mb-2">Firmantes de la petición</h1>
+  <p class="text-muted mb-10 max-w-2xl">
+    Lista de todas las personas que han firmado, separadas por alumnos y trabajadores.
+  </p>
+
+  <!-- ================= ALUMNOS ================= -->
+  <ng-container *ngIf="(alumnos$ | async) as alumnosTotal">
+    <ng-container *ngIf="filtrar(alumnosTotal, busquedaAlumnos) as alumnosFiltrados">
+
+      <section class="border border-line bg-surface mb-12">
+        <!-- Encabezado de la tarjeta: título, buscador y exportar -->
+        <div class="flex flex-wrap items-center justify-between gap-4 p-5 border-b border-line">
+          <h2 class="font-display text-xl font-medium">Alumnos <span class="text-muted text-base font-normal">({{ alumnosTotal.length }})</span></h2>
+          <div class="flex flex-wrap items-center gap-3">
+            <input
+              type="text"
+              [(ngModel)]="busquedaAlumnos"
+              (ngModelChange)="paginaAlumnos = 1"
+              placeholder="Buscar…"
+              class="bg-base border border-line focus:border-accent px-3 py-2 text-sm text-bone rounded-none w-48"
+            />
+            <button
+              *ngIf="permisos.descargarExcel"
+              type="button"
+              (click)="descargarExcelAlumnos(alumnosFiltrados)"
+              class="bg-accent hover:bg-accentDark text-white text-sm font-medium px-4 py-2 transition-colors whitespace-nowrap"
+            >Descargar Excel</button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-base text-muted text-left">
+              <tr>
+                <th class="px-4 py-3 font-medium">Matrícula</th>
+                <th class="px-4 py-3 font-medium">Nombre completo</th>
+                <th class="px-4 py-3 font-medium">Correo</th>
+                <th class="px-4 py-3 font-medium">Escuela</th>
+                <th class="px-4 py-3 font-medium">Nivel educativo</th>
+                <th class="px-4 py-3 font-medium">Región</th>
+                <th *ngIf="permisos.editarFirmantes || permisos.borrarFirmantes" class="px-4 py-3 font-medium">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-line">
+              <ng-container *ngFor="let a of paginar(alumnosFiltrados, paginaAlumnos, tamanoPaginaAlumnos)">
+                <tr *ngIf="editandoId !== a.id">
+                  <td class="px-4 py-3">{{ a.identificador }}</td>
+                  <td class="px-4 py-3">{{ a.nombres }} {{ a.apellidoPaterno }} {{ a.apellidoMaterno }}</td>
+                  <td class="px-4 py-3">{{ a.correo }}</td>
+                  <td class="px-4 py-3">{{ a.unidad }}</td>
+                  <td class="px-4 py-3">{{ a.categoria }}</td>
+                  <td class="px-4 py-3">{{ a.region }}</td>
+                  <td *ngIf="permisos.editarFirmantes || permisos.borrarFirmantes" class="px-4 py-3 whitespace-nowrap">
+                    <button *ngIf="permisos.editarFirmantes" type="button" (click)="empezarEdicion(a)" class="text-accent hover:underline mr-3">Editar</button>
+                    <button *ngIf="permisos.borrarFirmantes" type="button" (click)="eliminarFirma(a)" class="text-red-600 hover:underline">Eliminar</button>
+                  </td>
+                </tr>
+                <tr *ngIf="editandoId === a.id" class="bg-surfaceAlt">
+                  <td class="px-2 py-2"><input [(ngModel)]="borrador.identificador" class="w-full bg-base border border-line px-2 py-1.5" /></td>
+                  <td class="px-2 py-2 flex flex-col gap-1">
+                    <input [(ngModel)]="borrador.nombres" placeholder="Nombres" class="w-full bg-base border border-line px-2 py-1.5" />
+                    <input [(ngModel)]="borrador.apellidoPaterno" placeholder="Ap. paterno" class="w-full bg-base border border-line px-2 py-1.5" />
+                    <input [(ngModel)]="borrador.apellidoMaterno" placeholder="Ap. materno" class="w-full bg-base border border-line px-2 py-1.5" />
+                  </td>
+                  <td class="px-2 py-2"><input [(ngModel)]="borrador.correo" class="w-full bg-base border border-line px-2 py-1.5" /></td>
+                  <td class="px-2 py-2"><input [(ngModel)]="borrador.unidad" class="w-full bg-base border border-line px-2 py-1.5" /></td>
+                  <td class="px-2 py-2"><input [(ngModel)]="borrador.categoria" class="w-full bg-base border border-line px-2 py-1.5" /></td>
+                  <td class="px-2 py-2"><input [(ngModel)]="borrador.region" class="w-full bg-base border border-line px-2 py-1.5" /></td>
+                  <td class="px-2 py-2 whitespace-nowrap">
+                    <button type="button" [disabled]="guardandoEdicion" (click)="guardarEdicion()" class="text-accent hover:underline mr-3">Guardar</button>
+                    <button type="button" (click)="cancelarEdicion()" class="text-muted hover:underline">Cancelar</button>
+                  </td>
+                </tr>
+              </ng-container>
+              <tr *ngIf="!alumnosFiltrados.length">
+                <td colspan="7" class="px-4 py-6 text-center text-muted">No se encontraron alumnos.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginación -->
+        <div class="flex flex-wrap items-center justify-between gap-4 p-4 border-t border-line text-sm">
+          <div class="flex items-center gap-2 text-muted">
+            <span>Filas por página:</span>
+            <select [(ngModel)]="tamanoPaginaAlumnos" (ngModelChange)="paginaAlumnos = 1" class="bg-base border border-line px-2 py-1">
+              <option [value]="10">10</option>
+              <option [value]="25">25</option>
+              <option [value]="50">50</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-3">
+            <button type="button" (click)="irAPagina('alumnos', 1, totalPaginas(alumnosFiltrados, tamanoPaginaAlumnos))" class="text-muted hover:text-accent disabled:opacity-40" [disabled]="paginaAlumnos === 1">Primero</button>
+            <button type="button" (click)="irAPagina('alumnos', paginaAlumnos - 1, totalPaginas(alumnosFiltrados, tamanoPaginaAlumnos))" class="text-muted hover:text-accent disabled:opacity-40" [disabled]="paginaAlumnos === 1">Anterior</button>
+            <span>Página {{ paginaAlumnos }} de {{ totalPaginas(alumnosFiltrados, tamanoPaginaAlumnos) }}</span>
+            <button type="button" (click)="irAPagina('alumnos', paginaAlumnos + 1, totalPaginas(alumnosFiltrados, tamanoPaginaAlumnos))" class="text-muted hover:text-accent disabled:opacity-40" [disabled]="paginaAlumnos === totalPaginas(alumnosFiltrados, tamanoPaginaAlumnos)">Siguiente</button>
+            <button type="button" (click)="irAPagina('alumnos', totalPaginas(alumnosFiltrados, tamanoPaginaAlumnos), totalPaginas(alumnosFiltrados, tamanoPaginaAlumnos))" class="text-muted hover:text-accent disabled:opacity-40" [disabled]="paginaAlumnos === totalPaginas(alumnosFiltrados, tamanoPaginaAlumnos)">Último</button>
+          </div>
+        </div>
+      </section>
+
+    </ng-container>
+  </ng-container>
+
+  <!-- ================= TRABAJADORES ================= -->
+  <ng-container *ngIf="(trabajadores$ | async) as trabajadoresTotal">
+    <ng-container *ngIf="filtrar(trabajadoresTotal, busquedaTrabajadores) as trabajadoresFiltrados">
+
+      <section class="border border-line bg-surface">
+        <div class="flex flex-wrap items-center justify-between gap-4 p-5 border-b border-line">
+          <h2 class="font-display text-xl font-medium">Trabajadores <span class="text-muted text-base font-normal">({{ trabajadoresTotal.length }})</span></h2>
+          <div class="flex flex-wrap items-center gap-3">
+            <input
+              type="text"
+              [(ngModel)]="busquedaTrabajadores"
+              (ngModelChange)="paginaTrabajadores = 1"
+              placeholder="Buscar…"
+              class="bg-base border border-line focus:border-accent px-3 py-2 text-sm text-bone rounded-none w-48"
+            />
+            <button
+              *ngIf="permisos.descargarExcel"
+              type="button"
+              (click)="descargarExcelTrabajadores(trabajadoresFiltrados)"
+              class="bg-accent hover:bg-accentDark text-white text-sm font-medium px-4 py-2 transition-colors whitespace-nowrap"
+            >Descargar Excel</button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-base text-muted text-left">
+              <tr>
+                <th class="px-4 py-3 font-medium">Número de trabajador</th>
+                <th class="px-4 py-3 font-medium">Nombre completo</th>
+                <th class="px-4 py-3 font-medium">Correo</th>
+                <th class="px-4 py-3 font-medium">Adscrito</th>
+                <th class="px-4 py-3 font-medium">Tipo de trabajador</th>
+                <th class="px-4 py-3 font-medium">Región</th>
+                <th *ngIf="permisos.editarFirmantes || permisos.borrarFirmantes" class="px-4 py-3 font-medium">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-line">
+              <ng-container *ngFor="let t of paginar(trabajadoresFiltrados, paginaTrabajadores, tamanoPaginaTrabajadores)">
+                <tr *ngIf="editandoId !== t.id">
+                  <td class="px-4 py-3">{{ t.identificador }}</td>
+                  <td class="px-4 py-3">{{ t.nombres }} {{ t.apellidoPaterno }} {{ t.apellidoMaterno }}</td>
+                  <td class="px-4 py-3">{{ t.correo }}</td>
+                  <td class="px-4 py-3">{{ t.unidad }}</td>
+                  <td class="px-4 py-3">{{ t.categoria }}</td>
+                  <td class="px-4 py-3">{{ t.region }}</td>
+                  <td *ngIf="permisos.editarFirmantes || permisos.borrarFirmantes" class="px-4 py-3 whitespace-nowrap">
+                    <button *ngIf="permisos.editarFirmantes" type="button" (click)="empezarEdicion(t)" class="text-accent hover:underline mr-3">Editar</button>
+                    <button *ngIf="permisos.borrarFirmantes" type="button" (click)="eliminarFirma(t)" class="text-red-600 hover:underline">Eliminar</button>
+                  </td>
+                </tr>
+                <tr *ngIf="editandoId === t.id" class="bg-surfaceAlt">
+                  <td class="px-2 py-2"><input [(ngModel)]="borrador.identificador" class="w-full bg-base border border-line px-2 py-1.5" /></td>
+                  <td class="px-2 py-2 flex flex-col gap-1">
+                    <input [(ngModel)]="borrador.nombres" placeholder="Nombres" class="w-full bg-base border border-line px-2 py-1.5" />
+                    <input [(ngModel)]="borrador.apellidoPaterno" placeholder="Ap. paterno" class="w-full bg-base border border-line px-2 py-1.5" />
+                    <input [(ngModel)]="borrador.apellidoMaterno" placeholder="Ap. materno" class="w-full bg-base border border-line px-2 py-1.5" />
+                  </td>
+                  <td class="px-2 py-2"><input [(ngModel)]="borrador.correo" class="w-full bg-base border border-line px-2 py-1.5" /></td>
+                  <td class="px-2 py-2"><input [(ngModel)]="borrador.unidad" class="w-full bg-base border border-line px-2 py-1.5" /></td>
+                  <td class="px-2 py-2"><input [(ngModel)]="borrador.categoria" class="w-full bg-base border border-line px-2 py-1.5" /></td>
+                  <td class="px-2 py-2"><input [(ngModel)]="borrador.region" class="w-full bg-base border border-line px-2 py-1.5" /></td>
+                  <td class="px-2 py-2 whitespace-nowrap">
+                    <button type="button" [disabled]="guardandoEdicion" (click)="guardarEdicion()" class="text-accent hover:underline mr-3">Guardar</button>
+                    <button type="button" (click)="cancelarEdicion()" class="text-muted hover:underline">Cancelar</button>
+                  </td>
+                </tr>
+              </ng-container>
+              <tr *ngIf="!trabajadoresFiltrados.length">
+                <td colspan="7" class="px-4 py-6 text-center text-muted">No se encontraron trabajadores.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-4 p-4 border-t border-line text-sm">
+          <div class="flex items-center gap-2 text-muted">
+            <span>Filas por página:</span>
+            <select [(ngModel)]="tamanoPaginaTrabajadores" (ngModelChange)="paginaTrabajadores = 1" class="bg-base border border-line px-2 py-1">
+              <option [value]="10">10</option>
+              <option [value]="25">25</option>
+              <option [value]="50">50</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-3">
+            <button type="button" (click)="irAPagina('trabajadores', 1, totalPaginas(trabajadoresFiltrados, tamanoPaginaTrabajadores))" class="text-muted hover:text-accent disabled:opacity-40" [disabled]="paginaTrabajadores === 1">Primero</button>
+            <button type="button" (click)="irAPagina('trabajadores', paginaTrabajadores - 1, totalPaginas(trabajadoresFiltrados, tamanoPaginaTrabajadores))" class="text-muted hover:text-accent disabled:opacity-40" [disabled]="paginaTrabajadores === 1">Anterior</button>
+            <span>Página {{ paginaTrabajadores }} de {{ totalPaginas(trabajadoresFiltrados, tamanoPaginaTrabajadores) }}</span>
+            <button type="button" (click)="irAPagina('trabajadores', paginaTrabajadores + 1, totalPaginas(trabajadoresFiltrados, tamanoPaginaTrabajadores))" class="text-muted hover:text-accent disabled:opacity-40" [disabled]="paginaTrabajadores === totalPaginas(trabajadoresFiltrados, tamanoPaginaTrabajadores)">Siguiente</button>
+            <button type="button" (click)="irAPagina('trabajadores', totalPaginas(trabajadoresFiltrados, tamanoPaginaTrabajadores), totalPaginas(trabajadoresFiltrados, tamanoPaginaTrabajadores))" class="text-muted hover:text-accent disabled:opacity-40" [disabled]="paginaTrabajadores === totalPaginas(trabajadoresFiltrados, tamanoPaginaTrabajadores)">Último</button>
+          </div>
+        </div>
+      </section>
+
+    </ng-container>
+  </ng-container>
+</main>

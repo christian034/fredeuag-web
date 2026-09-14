@@ -1,0 +1,16 @@
+<app-site-nav></app-site-nav>
+
+<main class="relative isolate bg-base min-h-screen px-4 sm:px-6 md:px-16 py-10 md:py-14 text-bone">
+  <app-fondo-publico></app-fondo-publico>
+  <p class="text-accent text-sm font-medium mb-2 tracking-wide">Participa</p>
+  <h1 class="font-display text-3xl md:text-4xl font-medium mb-8 md:mb-10">Encuestas del movimiento</h1>
+
+  <div class="space-y-8 max-w-2xl">
+    <ng-container *ngFor="let encuesta of (encuestas$ | async)">
+      <app-encuesta-publica [seccion]="encuesta"></app-encuesta-publica>
+    </ng-container>
+    <p *ngIf="(encuestas$ | async)?.length === 0" class="text-muted text-sm">Por ahora no hay encuestas activas.</p>
+  </div>
+</main>
+
+<app-site-footer *ngIf="(contenido$ | async) as contenido" [redes]="contenido.contacto"></app-site-footer>

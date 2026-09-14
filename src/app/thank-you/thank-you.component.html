@@ -1,0 +1,22 @@
+<div class="relative isolate min-h-screen flex flex-col bg-base text-bone font-body">
+  <app-fondo-publico></app-fondo-publico>
+  <main class="flex-1 flex items-center justify-center px-6 text-center">
+    <div class="max-w-md">
+      <p class="text-accent text-sm font-medium mb-3">Firma registrada</p>
+      <h1 class="font-display text-3xl md:text-4xl font-semibold mb-4">Gracias por sumarte</h1>
+      <p class="text-muted leading-relaxed mb-2">
+        Tu firma ya forma parte de la petición del movimiento.
+      </p>
+      <p *ngIf="totalFirmas$ | async as total" class="text-muted leading-relaxed mb-8">
+        Llevamos <span class="text-accent font-semibold">{{ total }}</span> firmas hasta ahora.
+      </p>
+      <a
+        routerLink="/"
+        class="inline-block border-2 border-line hover:border-accent px-6 py-3 transition-colors"
+      >
+        Volver al inicio
+      </a>
+    </div>
+  </main>
+  <app-site-footer *ngIf="(contenido$ | async) as contenido" [redes]="contenido.contacto"></app-site-footer>
+</div>

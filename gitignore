@@ -1,0 +1,44 @@
+# Dependencias — se reinstalan con "npm install", no deben subirse
+/node_modules
+
+# Compilación
+/dist
+/tmp
+/out-tsc
+/bazel-out
+
+# Caché de Angular
+/.angular/cache
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Editores de código
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# Variables de entorno / secretos (por si algún día agregas un archivo así)
+.env
+.env.local
+
+# Registros de npm
+npm-debug.log
+yarn-error.log

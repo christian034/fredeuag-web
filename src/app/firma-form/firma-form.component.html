@@ -1,0 +1,180 @@
+<div class="relative isolate min-h-screen flex flex-col bg-base">
+<app-fondo-publico></app-fondo-publico>
+<main class="flex-1 flex items-center justify-center px-6 py-14">
+  <div class="w-full max-w-xl bg-surface border border-line p-8 md:p-12 relative">
+
+    <a routerLink="/" class="text-muted hover:text-accent text-sm inline-block mb-6">← Volver al inicio</a>
+
+    <p class="text-accent text-sm font-medium mb-2 tracking-wide">
+      {{ tipo === 'alumno' ? 'Formulario para alumnos' : 'Formulario para trabajadores' }}
+    </p>
+    <h1 class="font-display text-3xl md:text-4xl font-medium mb-8 text-bone">Firma la petición</h1>
+
+    <form [formGroup]="form" (ngSubmit)="enviar()" class="space-y-5" novalidate>
+
+      <div>
+        <label for="identificador" class="block text-sm text-muted mb-1">{{ etiquetaIdentificador }}</label>
+        <input
+          id="identificador"
+          type="text"
+          inputmode="numeric"
+          [attr.maxlength]="tipo === 'alumno' ? 8 : null"
+          formControlName="identificador"
+          (input)="soloNumeros($event)"
+          class="w-full bg-base border border-line focus:border-accent px-4 py-3 text-bone rounded-none"
+        />
+        <p
+          *ngIf="form.get('identificador')?.invalid && form.get('identificador')?.touched"
+          class="text-sm text-red-600 mt-1"
+        >
+          {{ mensajeErrorIdentificador }}
+        </p>
+      </div>
+
+      <div>
+        <label for="nombres" class="block text-sm text-muted mb-1">Nombre o Nombres</label>
+        <input
+          id="nombres"
+          type="text"
+          formControlName="nombres"
+          class="w-full bg-base border border-line focus:border-accent px-4 py-3 text-bone rounded-none"
+        />
+        <p
+          *ngIf="form.get('nombres')?.invalid && form.get('nombres')?.touched"
+          class="text-sm text-red-600 mt-1"
+        >
+          Escribe tu nombre o nombres.
+        </p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div>
+          <label for="apellidoPaterno" class="block text-sm text-muted mb-1">Apellido Paterno</label>
+          <input
+            id="apellidoPaterno"
+            type="text"
+            formControlName="apellidoPaterno"
+            class="w-full bg-base border border-line focus:border-accent px-4 py-3 text-bone rounded-none"
+          />
+          <p
+            *ngIf="form.get('apellidoPaterno')?.invalid && form.get('apellidoPaterno')?.touched"
+            class="text-sm text-red-600 mt-1"
+          >
+            Campo obligatorio.
+          </p>
+        </div>
+        <div>
+          <label for="apellidoMaterno" class="block text-sm text-muted mb-1">Apellido Materno</label>
+          <input
+            id="apellidoMaterno"
+            type="text"
+            formControlName="apellidoMaterno"
+            class="w-full bg-base border border-line focus:border-accent px-4 py-3 text-bone rounded-none"
+          />
+          <p
+            *ngIf="form.get('apellidoMaterno')?.invalid && form.get('apellidoMaterno')?.touched"
+            class="text-sm text-red-600 mt-1"
+          >
+            Campo obligatorio.
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <label for="correo" class="block text-sm text-muted mb-1">Correo Electrónico</label>
+        <input
+          id="correo"
+          type="email"
+          formControlName="correo"
+          class="w-full bg-base border border-line focus:border-accent px-4 py-3 text-bone rounded-none"
+        />
+        <p
+          *ngIf="form.get('correo')?.invalid && form.get('correo')?.touched"
+          class="text-sm text-red-600 mt-1"
+        >
+          Ingresa un correo válido.
+        </p>
+      </div>
+
+      <div>
+        <label for="unidad" class="block text-sm text-muted mb-1">{{ etiquetaUnidad }}</label>
+        <input
+          id="unidad"
+          type="text"
+          formControlName="unidad"
+          class="w-full bg-base border border-line focus:border-accent px-4 py-3 text-bone rounded-none"
+        />
+        <p
+          *ngIf="form.get('unidad')?.invalid && form.get('unidad')?.touched"
+          class="text-sm text-red-600 mt-1"
+        >
+          Este campo es obligatorio.
+        </p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div *ngIf="tipo === 'trabajador'">
+          <label for="categoria" class="block text-sm text-muted mb-1">{{ etiquetaCategoria }}</label>
+          <select
+            id="categoria"
+            formControlName="categoria"
+            class="w-full bg-base border border-line focus:border-accent px-4 py-3 text-bone rounded-none"
+          >
+            <option value="" disabled>Selecciona una opción</option>
+            <option *ngFor="let opcion of opcionesCategoria" [value]="opcion">{{ opcion }}</option>
+          </select>
+          <p
+            *ngIf="form.get('categoria')?.invalid && form.get('categoria')?.touched"
+            class="text-sm text-red-600 mt-1"
+          >
+            Selecciona una opción.
+          </p>
+        </div>
+        <div [class.sm:col-span-2]="tipo === 'alumno'">
+          <label for="region" class="block text-sm text-muted mb-1">Región del estado</label>
+          <select
+            id="region"
+            formControlName="region"
+            class="w-full bg-base border border-line focus:border-accent px-4 py-3 text-bone rounded-none"
+          >
+            <option value="" disabled>Selecciona una opción</option>
+            <option *ngFor="let opcion of regiones" [value]="opcion">{{ opcion }}</option>
+          </select>
+          <p
+            *ngIf="form.get('region')?.invalid && form.get('region')?.touched"
+            class="text-sm text-red-600 mt-1"
+          >
+            Selecciona una opción.
+          </p>
+        </div>
+      </div>
+
+      <p *ngIf="error" class="text-sm text-red-600">{{ error }}</p>
+
+      <button
+        type="submit"
+        [disabled]="enviando || enviadoConExito"
+        class="w-full bg-accent hover:bg-accentDark disabled:opacity-60 text-white text-base font-medium px-8 py-3 transition-colors"
+      >
+        {{ enviando ? 'Guardando firma…' : 'Firmar petición' }}
+      </button>
+    </form>
+  </div>
+</main>
+<app-site-footer *ngIf="(contenido$ | async) as contenido" [redes]="contenido.contacto"></app-site-footer>
+</div>
+
+<!-- Modal de confirmación, a pantalla completa -->
+<div *ngIf="mostrarModalExito" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4">
+  <div class="bg-surface border border-line w-full max-w-sm p-8 text-center">
+    <div class="w-16 h-16 rounded-full bg-accent/10 border-2 border-accent flex items-center justify-center mb-4 mx-auto">
+      <svg viewBox="0 0 24 24" class="w-8 h-8 text-accent" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+      </svg>
+    </div>
+    <p class="font-display text-2xl font-medium text-bone mb-2">¡Gracias por firmar!</p>
+    <p class="text-muted text-sm">Tu firma ya forma parte de la petición y respalda a los organizadores del movimiento. Te enviaremos la confirmación a tu correo electrónico.</p>
+    <p class="text-accent text-sm mt-3" style="font-family: 'Dancing Script', cursive; font-size: 1.35rem;">¡Academia y Democracia!</p>
+    <p class="text-muted text-xs mt-4">Volviendo al inicio…</p>
+  </div>
+</div>

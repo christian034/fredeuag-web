@@ -1,0 +1,40 @@
+<main class="bg-base min-h-screen flex items-center justify-center px-6 py-14">
+  <div class="w-full max-w-sm bg-surface border border-line p-8 md:p-10">
+    <p class="text-accent text-sm font-medium mb-2 tracking-wide">Panel del movimiento</p>
+    <h1 class="font-display text-2xl md:text-3xl font-medium mb-8 text-bone">Iniciar sesión</h1>
+
+    <form [formGroup]="form" (ngSubmit)="enviar()" class="space-y-5" novalidate>
+      <div>
+        <label for="correo" class="block text-sm text-muted mb-1">Correo electrónico</label>
+        <input
+          id="correo"
+          type="email"
+          formControlName="correo"
+          class="w-full bg-base border border-line focus:border-accent px-4 py-3 text-bone rounded-none"
+        />
+      </div>
+
+      <div>
+        <label for="password" class="block text-sm text-muted mb-1">Contraseña</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          class="w-full bg-base border border-line focus:border-accent px-4 py-3 text-bone rounded-none"
+        />
+      </div>
+
+      <p *ngIf="error" class="text-sm text-red-600">{{ error }}</p>
+
+      <button
+        type="submit"
+        [disabled]="enviando"
+        class="w-full bg-accent hover:bg-accentDark disabled:opacity-60 text-white text-base font-medium px-8 py-3 transition-colors"
+      >
+        {{ enviando ? 'Ingresando…' : 'Ingresar' }}
+      </button>
+    </form>
+
+    <a routerLink="/" class="block text-center text-muted hover:text-accent text-sm mt-6">← Volver al sitio</a>
+  </div>
+</main>

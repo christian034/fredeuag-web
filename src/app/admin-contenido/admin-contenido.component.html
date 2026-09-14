@@ -1,0 +1,570 @@
+<app-admin-nav></app-admin-nav>
+
+<main *ngIf="auth.permisos$ | async as permisos" class="bg-base min-h-screen pb-16 text-bone">
+  <div class="px-4 sm:px-6 md:px-16">
+    <h1 class="font-display text-2xl sm:text-3xl md:text-4xl font-medium mb-6">Editar contenido de la página</h1>
+  </div>
+
+  <!-- Pestañas -->
+  <div class="border-b border-line px-4 sm:px-6 md:px-16 mb-2 overflow-x-auto">
+    <div class="flex gap-1 whitespace-nowrap min-w-max">
+      <button type="button" (click)="cambiarPestana('inicio')" class="px-4 py-3 text-sm border-b-2 -mb-px transition-colors" [class.border-accent]="pestana === 'inicio'" [class.text-accent]="pestana === 'inicio'" [class.border-transparent]="pestana !== 'inicio'" [class.text-muted]="pestana !== 'inicio'">Inicio</button>
+      <button type="button" (click)="cambiarPestana('noticias')" class="px-4 py-3 text-sm border-b-2 -mb-px transition-colors" [class.border-accent]="pestana === 'noticias'" [class.text-accent]="pestana === 'noticias'" [class.border-transparent]="pestana !== 'noticias'" [class.text-muted]="pestana !== 'noticias'">Noticias Nuevas</button>
+      <button type="button" (click)="cambiarPestana('galeria')" class="px-4 py-3 text-sm border-b-2 -mb-px transition-colors" [class.border-accent]="pestana === 'galeria'" [class.text-accent]="pestana === 'galeria'" [class.border-transparent]="pestana !== 'galeria'" [class.text-muted]="pestana !== 'galeria'">Galería</button>
+      <button type="button" (click)="cambiarPestana('contacto')" class="px-4 py-3 text-sm border-b-2 -mb-px transition-colors" [class.border-accent]="pestana === 'contacto'" [class.text-accent]="pestana === 'contacto'" [class.border-transparent]="pestana !== 'contacto'" [class.text-muted]="pestana !== 'contacto'">Contacto</button>
+      <button type="button" (click)="cambiarPestana('secciones')" class="px-4 py-3 text-sm border-b-2 -mb-px transition-colors" [class.border-accent]="pestana === 'secciones'" [class.text-accent]="pestana === 'secciones'" [class.border-transparent]="pestana !== 'secciones'" [class.text-muted]="pestana !== 'secciones'">Secciones adicionales</button>
+    </div>
+  </div>
+
+  <!-- ============ PESTAÑA: INICIO ============ -->
+  <section *ngIf="cargado && pestana === 'inicio'" class="px-4 sm:px-6 md:px-16 py-8">
+    <p *ngIf="!permisos.editarCualquierContenido" class="text-sm text-muted mb-4">Solo puedes ver esta sección; su edición es de quien administra el sitio en general.</p>
+    <form [formGroup]="formInicio" (ngSubmit)="guardarInicio()" class="space-y-6" novalidate>
+
+      <div class="border border-line bg-surface p-4 sm:p-6">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-line">
+          <h3 class="font-display text-lg font-medium">Acceso a la petición de firma</h3>
+          <label class="flex items-center gap-2 text-sm text-muted">
+            <input type="checkbox" formControlName="accesoVisible" />
+            Mostrar esta sección en el inicio
+          </label>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm text-muted mb-1">Título <span class="text-red-600">*</span></label>
+            <input type="text" formControlName="accesoTitulo" class="w-full bg-base border border-line focus:border-accent px-4 py-3 text-bone rounded-none disabled:opacity-60" />
+          </div>
+          <div>
+            <label class="block text-sm text-muted mb-1">Descripción <span class="text-red-600">*</span></label>
+            <textarea formControlName="accesoDescripcion" rows="2" class="w-full bg-base border border-line focus:border-accent px-4 py-3 text-bone rounded-none disabled:opacity-60"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="border border-line bg-surface p-4 sm:p-6">
+        <h3 class="font-display text-lg font-medium mb-4 pb-3 border-b border-line">Sobre nosotros</h3>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm text-muted mb-1">Párrafo 1 <span class="text-red-600">*</span></label>
+            <textarea formControlName="informacionParrafo1" rows="3" class="w-full bg-base border border-line focus:border-accent px-4 py-3 text-bone rounded-none disabled:opacity-60"></textarea>
+          </div>
+          <div>
+            <label class="block text-sm text-muted mb-1">Párrafo 2 <span class="text-red-600">*</span></label>
+            <textarea formControlName="informacionParrafo2" rows="3" class="w-full bg-base border border-line focus:border-accent px-4 py-3 text-bone rounded-none disabled:opacity-60"></textarea>
+          </div>
+          <div>
+            <label class="block text-sm text-muted mb-1">URL de la imagen <span class="text-red-600">*</span></label>
+            <app-selector-imagen formControlName="informacionImagen"></app-selector-imagen>
+          </div>
+        </div>
+      </div>
+
+      <div class="border border-line bg-surface p-4 sm:p-6">
+        <h3 class="font-display text-lg font-medium mb-4 pb-3 border-b border-line">Misión y visión</h3>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm text-muted mb-1">Misión <span class="text-red-600">*</span></label>
+            <textarea formControlName="mision" rows="4" class="w-full bg-base border border-line focus:border-accent px-4 py-3 text-bone rounded-none disabled:opacity-60"></textarea>
+          </div>
+          <div>
+            <label class="block text-sm text-muted mb-1">Visión <span class="text-red-600">*</span></label>
+            <textarea formControlName="vision" rows="4" class="w-full bg-base border border-line focus:border-accent px-4 py-3 text-bone rounded-none disabled:opacity-60"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="border border-line bg-surface p-4 sm:p-6">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-line">
+          <h3 class="font-display text-lg font-medium">Banner de encuestas</h3>
+          <label class="flex items-center gap-2 text-sm text-muted whitespace-nowrap">
+            <input type="checkbox" formControlName="bannerVisible" />
+            Mostrar este banner en el inicio
+          </label>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm text-muted mb-1">Texto pequeño de arriba <span class="text-red-600">*</span></label>
+            <input type="text" formControlName="bannerEyebrow" class="w-full bg-base border border-line focus:border-accent px-4 py-3 text-bone rounded-none disabled:opacity-60" />
+          </div>
+          <div>
+            <label class="block text-sm text-muted mb-1">Título <span class="text-red-600">*</span></label>
+            <input type="text" formControlName="bannerTitulo" class="w-full bg-base border border-line focus:border-accent px-4 py-3 text-bone rounded-none disabled:opacity-60" />
+          </div>
+          <div>
+            <label class="block text-sm text-muted mb-1">Texto del botón <span class="text-red-600">*</span></label>
+            <input type="text" formControlName="bannerBoton" class="w-full bg-base border border-line focus:border-accent px-4 py-3 text-bone rounded-none disabled:opacity-60" />
+          </div>
+        </div>
+      </div>
+
+      <button *ngIf="permisos.editarCualquierContenido" type="submit" [disabled]="guardandoInicio" class="w-full sm:w-auto bg-accent hover:bg-accentDark disabled:opacity-60 text-white text-base font-medium px-8 py-3 transition-colors">
+        {{ guardandoInicio ? 'Guardando…' : 'Guardar Inicio' }}
+      </button>
+    </form>
+  </section>
+
+  <!-- ============ PESTAÑA: NOTICIAS ============ -->
+  <section *ngIf="cargado && pestana === 'noticias'" class="px-4 sm:px-6 md:px-16 py-8">
+
+    <!-- ===== VISTA LISTA (tipo bandeja de entrada) ===== -->
+    <div *ngIf="vistaNoticias === 'lista'">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <p class="text-sm text-muted max-w-xl">
+          Solo las últimas 5 noticias <strong>aprobadas</strong> aparecen en el carrusel del inicio.
+          <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-600 inline-block"></span> aprobada</span> ·
+          <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-orange-500 inline-block"></span> en revisión</span> ·
+          <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-600 inline-block"></span> no aprobada</span> ·
+          <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-gray-400 inline-block"></span> sin estatus</span>
+        </p>
+        <button *ngIf="permisos.crearContenidoPropio" type="button" (click)="agregarNoticia()" class="text-sm text-accent hover:text-accentDark underline underline-offset-2 whitespace-nowrap">+ Agregar noticia</button>
+      </div>
+
+      <div class="border border-line bg-surface divide-y divide-line">
+        <ng-container *ngFor="let noticiaCtrl of noticiasArray.controls; let i = index">
+        <button
+          *ngIf="puedeVerFilaDe(permisos, noticiaCtrl.value.autorCorreo)"
+          type="button"
+          (click)="abrirNoticiaDetalle(i)"
+          class="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-base transition-colors"
+        >
+          <!-- Estrella de destacada -->
+          <span
+            (click)="alternarDestacada(i, $event)"
+            [class.text-amber-400]="noticiaCtrl.value.destacada"
+            [class.text-line]="!noticiaCtrl.value.destacada"
+            class="text-xl leading-none cursor-pointer select-none"
+            title="Marcar como muy relevante"
+          >★</span>
+
+          <!-- Punto de estatus -->
+          <span
+            [class]="'w-2.5 h-2.5 rounded-full flex-shrink-0 ' + colorEstadoNoticia(noticiaCtrl.value.estado)"
+            [title]="etiquetaEstadoNoticia(noticiaCtrl.value.estado)"
+          ></span>
+
+          <span class="w-40 flex-shrink-0 truncate text-sm" [class.font-semibold]="noticiaNoLeida(noticiaCtrl)" [class.text-bone]="noticiaNoLeida(noticiaCtrl)" [class.text-muted]="!noticiaNoLeida(noticiaCtrl)">
+            {{ noticiaCtrl.value.autorCorreo || 'Sin autor' }}
+          </span>
+
+          <span class="flex-1 min-w-0 truncate text-sm" [class.font-semibold]="noticiaNoLeida(noticiaCtrl)">
+            {{ noticiaCtrl.value.titulo || '(sin título)' }}
+            <span class="text-muted font-normal">— {{ noticiaCtrl.value.resumen }}</span>
+          </span>
+
+          <span *ngIf="noticiaCtrl.value.encuesta" class="text-xs text-accent flex-shrink-0" title="Tiene encuesta">📊</span>
+
+          <span class="text-xs text-muted flex-shrink-0 whitespace-nowrap">{{ noticiaCtrl.value.fecha }}</span>
+        </button>
+        </ng-container>
+
+        <p *ngIf="!hayNoticiasVisibles(permisos)" class="text-muted text-sm px-4 py-6">Aún no hay noticias.</p>
+      </div>
+    </div>
+
+    <!-- ===== VISTA DETALLE (una sola noticia a la vez, estilo "redactar mensaje") ===== -->
+    <div *ngIf="vistaNoticias === 'detalle' && indiceNoticiaAbierta !== null">
+      <button type="button" (click)="volverAListaNoticias()" class="text-sm text-muted hover:text-accent mb-4 inline-block">← Volver a la lista</button>
+
+      <form
+        [formGroup]="formNoticias"
+        (ngSubmit)="guardarNoticias()"
+        novalidate
+        class="w-full border border-line bg-surface"
+      >
+        <div formArrayName="noticias">
+          <div [formGroupName]="indiceNoticiaAbierta!">
+
+            <!-- Encabezado de la tarjeta -->
+            <div class="px-4 sm:px-6 py-4 border-b border-line">
+              <h2 class="font-display text-lg font-medium mb-2">
+                {{ noticiasArray.at(indiceNoticiaAbierta!).value.titulo ? 'Editar noticia' : 'Nueva noticia' }}
+              </h2>
+              <div class="flex flex-wrap items-center gap-3">
+                <span [class]="'w-2.5 h-2.5 rounded-full ' + colorEstadoNoticia(noticiasArray.at(indiceNoticiaAbierta!).value.estado)"></span>
+                <span class="text-sm text-muted">{{ etiquetaEstadoNoticia(noticiasArray.at(indiceNoticiaAbierta!).value.estado) }}</span>
+                <span class="text-xs text-muted">· {{ noticiasArray.at(indiceNoticiaAbierta!).value.autorCorreo }}</span>
+              </div>
+            </div>
+
+            <!-- Campos -->
+            <div class="px-4 sm:px-6 py-5 space-y-5">
+              <div>
+                <label class="block text-sm text-muted mb-1">Título <span class="text-red-600">*</span></label>
+                <input type="text" formControlName="titulo" class="w-full bg-base border border-line focus:border-accent px-4 py-2.5 text-bone rounded-none disabled:opacity-60" />
+              </div>
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm text-muted mb-1">Fecha <span class="text-red-600">*</span></label>
+                  <input type="text" formControlName="fecha" placeholder="Ej. 28 ago 2026" class="w-full bg-base border border-line focus:border-accent px-4 py-2.5 text-bone rounded-none disabled:opacity-60" />
+                </div>
+                <div>
+                  <label class="block text-sm text-muted mb-1">URL de la imagen <span class="text-red-600">*</span></label>
+                  <app-selector-imagen formControlName="imagen"></app-selector-imagen>
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm text-muted mb-1">Resumen (para el carrusel y la tarjeta de la lista) <span class="text-red-600">*</span></label>
+                <textarea formControlName="resumen" rows="2" class="w-full bg-base border border-line focus:border-accent px-4 py-2.5 text-bone rounded-none disabled:opacity-60"></textarea>
+              </div>
+              <div>
+                <label class="block text-sm text-muted mb-1">Texto alternativo de la imagen <span class="text-red-600">*</span></label>
+                <input type="text" formControlName="imagenAlt" class="w-full bg-base border border-line focus:border-accent px-4 py-2.5 text-bone rounded-none disabled:opacity-60" />
+              </div>
+              <div>
+                <label class="block text-sm text-muted mb-1">Contenido completo (se muestra en la página propia de la noticia)</label>
+                <app-editor-texto formControlName="cuerpoHtml"></app-editor-texto>
+              </div>
+              <div>
+                <label class="block text-sm text-muted mb-1">Link de video (YouTube, Vimeo, etc. — opcional)</label>
+                <input type="text" formControlName="videoUrl" placeholder="https://youtube.com/watch?v=…" class="w-full bg-base border border-line focus:border-accent px-4 py-2.5 text-bone rounded-none disabled:opacity-60" />
+              </div>
+
+              <!-- Encuesta embebida dentro de la noticia -->
+              <div class="border border-line bg-base p-4 space-y-3">
+                <label class="flex items-center gap-2 text-sm">
+                  <input type="checkbox" [(ngModel)]="borradorEncuestaNoticia.activa" [ngModelOptions]="{standalone: true}" />
+                  Agregar una encuesta a esta noticia
+                </label>
+
+                <ng-container *ngIf="borradorEncuestaNoticia.activa">
+                  <div>
+                    <label class="block text-sm text-muted mb-1">¿Cómo quieres mostrar el resultado?</label>
+                    <select [(ngModel)]="borradorEncuestaNoticia.tipoResultado" [ngModelOptions]="{standalone: true}" class="w-full bg-surface border border-line focus:border-accent px-3 py-2 text-bone rounded-none">
+                      <option value="tabla">Tabla (respuesta de texto libre)</option>
+                      <option value="grafico">Gráfico (opciones para elegir)</option>
+                    </select>
+                  </div>
+
+                  <div *ngIf="borradorEncuestaNoticia.tipoResultado === 'grafico'">
+                    <label class="block text-sm text-muted mb-1">Tipo de gráfico</label>
+                    <select [(ngModel)]="borradorEncuestaNoticia.tipoGrafico" [ngModelOptions]="{standalone: true}" class="w-full bg-surface border border-line focus:border-accent px-3 py-2 text-bone rounded-none">
+                      <option value="barras">Barras</option>
+                      <option value="circular">Circular</option>
+                      <option value="lineas">Líneas</option>
+                      <option value="histograma">Histograma</option>
+                      <option value="dispersion">Diagrama de dispersión</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm text-muted mb-1">¿Cuántas preguntas?</label>
+                    <input type="number" min="1" max="20" [(ngModel)]="borradorEncuestaNoticia.numeroPreguntas" [ngModelOptions]="{standalone: true}" (ngModelChange)="ajustarNumeroPreguntasNoticia()" class="w-32 bg-surface border border-line focus:border-accent px-3 py-2 text-bone rounded-none" />
+                  </div>
+
+                  <div *ngFor="let pregunta of borradorEncuestaNoticia.preguntas; let ip = index" class="border border-line bg-surface p-3 space-y-2">
+                    <p class="text-xs text-muted">Pregunta {{ ip + 1 }}</p>
+                    <input type="text" [(ngModel)]="pregunta.texto" [ngModelOptions]="{standalone: true}" placeholder="Texto de la pregunta" class="w-full bg-base border border-line focus:border-accent px-3 py-2 text-bone rounded-none" />
+
+                    <div *ngIf="borradorEncuestaNoticia.tipoResultado === 'grafico'" class="space-y-2">
+                      <div *ngFor="let opcion of pregunta.opciones; let io = index; trackBy: trackByIndex" class="flex items-center gap-2">
+                        <input type="text" [(ngModel)]="pregunta.opciones[io]" [ngModelOptions]="{standalone: true}" [placeholder]="'Opción ' + (io + 1)" class="flex-1 bg-base border border-line focus:border-accent px-3 py-2 text-bone rounded-none" />
+                        <button *ngIf="pregunta.opciones.length > 2" type="button" (click)="quitarOpcionNoticia(ip, io)" class="text-red-600 hover:underline text-sm">Quitar</button>
+                      </div>
+                      <button type="button" (click)="agregarOpcionNoticia(ip)" class="text-sm text-accent hover:text-accentDark underline underline-offset-2">+ Agregar otra opción</button>
+                    </div>
+                    <p *ngIf="borradorEncuestaNoticia.tipoResultado === 'tabla'" class="text-xs text-muted">
+                      Quien responda verá un cuadro de texto libre para esta pregunta.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm text-muted mb-1">Fecha y hora límite (opcional)</label>
+                    <input type="datetime-local" [(ngModel)]="borradorEncuestaNoticia.fechaLimite" [ngModelOptions]="{standalone: true}" class="w-full sm:w-64 bg-surface border border-line focus:border-accent px-3 py-2 text-bone rounded-none" />
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+
+            <!-- Barra de acciones, fija al fondo de la tarjeta -->
+            <div class="px-4 sm:px-6 py-4 border-t border-line flex flex-wrap items-center justify-between gap-3 sticky bottom-0 bg-surface">
+              <div class="flex flex-wrap items-center gap-4">
+                <button *ngIf="permisos.crearContenidoPropio" type="submit" [disabled]="guardandoNoticias" class="bg-accent hover:bg-accentDark disabled:opacity-60 text-white text-sm font-medium px-6 py-2.5 transition-colors">
+                  {{ guardandoNoticias ? 'Guardando…' : 'Guardar Noticia' }}
+                </button>
+                <button *ngIf="permisos.aprobarContenido && noticiasArray.at(indiceNoticiaAbierta!).value.estado !== 'aprobado'" type="button" (click)="aprobarNoticia(indiceNoticiaAbierta!)" class="text-sm text-green-600 hover:underline">Aprobar</button>
+                <button *ngIf="permisos.aprobarContenido && noticiasArray.at(indiceNoticiaAbierta!).value.estado !== 'rechazado'" type="button" (click)="rechazarNoticia(indiceNoticiaAbierta!)" class="text-sm text-orange-600 hover:underline">Rechazar</button>
+              </div>
+              <button *ngIf="puedeEditar(permisos, noticiasArray.at(indiceNoticiaAbierta!).value.autorCorreo)" type="button" (click)="quitarNoticia(indiceNoticiaAbierta!)" class="border border-red-600 text-red-600 hover:bg-red-600 hover:text-white text-sm font-medium px-5 py-2.5 transition-colors">
+                ✕ Quitar noticia
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ PESTAÑA: GALERÍA ============ -->
+  <section *ngIf="cargado && pestana === 'galeria'" class="px-4 sm:px-6 md:px-16 py-8">
+    <div class="flex items-center justify-between mb-6">
+      <p class="text-sm text-muted">Fotos que aparecen en la página de Galería. Lo que tú agregues queda pendiente hasta que se apruebe.</p>
+      <button *ngIf="permisos.crearContenidoPropio" type="button" (click)="abrirModalCrearFoto()" class="bg-accent hover:bg-accentDark text-white text-sm font-medium px-5 py-2.5 transition-colors whitespace-nowrap">+ Agregar foto</button>
+    </div>
+
+    <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <ng-container *ngFor="let foto of galeria; let i = index">
+      <div *ngIf="puedeVerFilaDe(permisos, foto.autorCorreo)" class="border border-line bg-surface overflow-hidden" [class.border-accent]="foto.destacada">
+        <div class="relative">
+          <img [src]="foto.url" [alt]="foto.descripcion" class="w-full h-40 object-cover" />
+          <span *ngIf="foto.destacada" class="absolute top-2 left-2 bg-accent text-white text-xs px-2 py-0.5">★ Destacada</span>
+        </div>
+        <div class="p-3">
+          <div class="flex items-center gap-2 mb-1">
+            <span
+              class="text-xs px-2 py-0.5"
+              [class.bg-accent]="foto.estado === 'pendiente'"
+              [class.text-white]="foto.estado === 'pendiente'"
+              [class.text-muted]="foto.estado !== 'pendiente'"
+            >{{ foto.estado === 'pendiente' ? 'Pendiente' : 'Aprobada' }}</span>
+          </div>
+          <p class="text-sm truncate">{{ foto.descripcion }}</p>
+          <div class="flex gap-3 mt-2 flex-wrap">
+            <button *ngIf="permisos.aprobarContenido && foto.estado === 'pendiente'" type="button" (click)="aprobarFoto(i)" class="text-sm text-accent hover:underline">Aprobar</button>
+            <button *ngIf="puedeEditar(permisos, foto.autorCorreo)" type="button" (click)="alternarFotoDestacada(i)" class="text-sm text-accent hover:underline">
+              {{ foto.destacada ? 'Quitar destacada' : 'Destacar' }}
+            </button>
+            <button *ngIf="puedeEditar(permisos, foto.autorCorreo)" type="button" (click)="abrirModalEditarFoto(i)" class="text-sm text-accent hover:underline">Editar</button>
+            <button *ngIf="puedeEditar(permisos, foto.autorCorreo)" type="button" (click)="abrirModalEliminarFoto(i)" class="text-sm text-red-600 hover:underline">Eliminar</button>
+          </div>
+        </div>
+      </div>
+      </ng-container>
+      <p *ngIf="!hayFotosVisibles(permisos)" class="text-muted text-sm">Aún no hay fotos en la galería.</p>
+    </div>
+  </section>
+
+  <!-- ============ PESTAÑA: CONTACTO ============ -->
+  <section *ngIf="cargado && pestana === 'contacto'" class="px-4 sm:px-6 md:px-16 py-8">
+    <p *ngIf="!permisos.editarCualquierContenido" class="text-sm text-muted mb-4">Solo puedes ver esta sección.</p>
+    <form [formGroup]="formContacto" (ngSubmit)="guardarContacto()" class="space-y-4 max-w-2xl" novalidate>
+      <div>
+        <label class="block text-sm text-muted mb-1">Descripción breve (se muestra en la página de Contacto) <span class="text-red-600">*</span></label>
+        <textarea formControlName="descripcion" rows="3" class="w-full bg-surface border border-line focus:border-accent px-4 py-3 text-bone rounded-none disabled:opacity-60"></textarea>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm text-muted mb-1">Correo <span class="text-red-600">*</span></label>
+          <input type="email" formControlName="correo" class="w-full bg-surface border border-line focus:border-accent px-4 py-3 text-bone rounded-none disabled:opacity-60" />
+        </div>
+        <div>
+          <label class="block text-sm text-muted mb-1">Teléfono <span class="text-red-600">*</span></label>
+          <input type="text" formControlName="telefono" class="w-full bg-surface border border-line focus:border-accent px-4 py-3 text-bone rounded-none disabled:opacity-60" />
+        </div>
+      </div>
+
+      <h3 class="font-display text-base font-medium pt-4">Redes sociales</h3>
+      <div class="grid sm:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-sm text-muted mb-1">Facebook</label>
+          <input type="text" formControlName="facebook" class="w-full bg-surface border border-line focus:border-accent px-4 py-3 text-bone rounded-none disabled:opacity-60" />
+        </div>
+        <div>
+          <label class="block text-sm text-muted mb-1">Instagram</label>
+          <input type="text" formControlName="instagram" class="w-full bg-surface border border-line focus:border-accent px-4 py-3 text-bone rounded-none disabled:opacity-60" />
+        </div>
+        <div>
+          <label class="block text-sm text-muted mb-1">X</label>
+          <input type="text" formControlName="x" class="w-full bg-surface border border-line focus:border-accent px-4 py-3 text-bone rounded-none disabled:opacity-60" />
+        </div>
+      </div>
+
+      <button *ngIf="permisos.editarCualquierContenido" type="submit" [disabled]="guardandoContacto" class="w-full sm:w-auto bg-accent hover:bg-accentDark disabled:opacity-60 text-white text-base font-medium px-8 py-3 transition-colors">
+        {{ guardandoContacto ? 'Guardando…' : 'Guardar Contacto' }}
+      </button>
+    </form>
+  </section>
+
+  <!-- ============ PESTAÑA: SECCIONES ADICIONALES ============ -->
+  <section *ngIf="pestana === 'secciones'" class="px-4 sm:px-6 md:px-16 py-8">
+    <div class="flex items-center justify-between mb-6">
+      <p class="text-sm text-muted max-w-xl">
+        Bloques informativos o encuestas que aparecen en el inicio. Lo que tú crees queda pendiente hasta su aprobación
+        (salvo que tú mismo puedas aprobar).
+      </p>
+      <button *ngIf="permisos.crearContenidoPropio && !pasoCreacion" type="button" (click)="abrirAsistenteCreacion()" class="bg-accent hover:bg-accentDark text-white text-sm font-medium px-5 py-2.5 transition-colors whitespace-nowrap">+ Nueva sección</button>
+    </div>
+
+    <!-- Paso 1: elegir tipo -->
+    <div *ngIf="pasoCreacion === 'elegirTipo'" class="max-w-xl border border-line bg-surface p-6">
+      <h3 class="font-display text-lg font-medium mb-4">¿Qué tipo de sección quieres crear?</h3>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <button type="button" (click)="elegirTipoSeccion('informativa')" class="border border-line hover:border-accent p-5 text-left transition-colors">
+          <p class="font-medium mb-1">Informativa</p>
+          <p class="text-sm text-muted">Título, texto, imagen y, si quieres, un botón que lleve a otra página.</p>
+        </button>
+        <button type="button" (click)="elegirTipoSeccion('encuesta')" class="border border-line hover:border-accent p-5 text-left transition-colors">
+          <p class="font-medium mb-1">Encuesta</p>
+          <p class="text-sm text-muted">Preguntas con opciones o de texto libre. Resultados en tabla o gráfico.</p>
+        </button>
+      </div>
+      <button type="button" (click)="cancelarAsistente()" class="text-sm text-muted hover:underline mt-4">Cancelar</button>
+    </div>
+
+    <!-- Paso 2: llenar datos según el tipo -->
+    <div *ngIf="pasoCreacion === 'llenarDatos'" class="max-w-2xl border border-line bg-surface p-4 sm:p-6 space-y-4">
+      <h3 class="font-display text-lg font-medium mb-2">
+        {{ seccionEditandoId ? 'Editar' : 'Nueva' }} sección — {{ borrador.tipo === 'informativa' ? 'Informativa' : 'Encuesta' }}
+      </h3>
+
+      <div>
+        <label class="block text-sm text-muted mb-1">Título</label>
+        <input type="text" [(ngModel)]="borrador.titulo" [ngModelOptions]="{standalone: true}" class="w-full bg-base border border-line focus:border-accent px-3 py-2 text-bone rounded-none" />
+      </div>
+
+      <ng-container *ngIf="borrador.tipo === 'informativa'">
+        <div>
+          <label class="block text-sm text-muted mb-1">Contenido</label>
+          <textarea [(ngModel)]="borrador.contenido" [ngModelOptions]="{standalone: true}" rows="4" class="w-full bg-base border border-line focus:border-accent px-3 py-2 text-bone rounded-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm text-muted mb-1">URL de la imagen</label>
+          <app-selector-imagen [(ngModel)]="borrador.imagen" [ngModelOptions]="{standalone: true}"></app-selector-imagen>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-sm text-muted mb-1">Enlace a otra página (opcional)</label>
+            <input type="text" [(ngModel)]="borrador.enlaceUrl" [ngModelOptions]="{standalone: true}" placeholder="https://…" class="w-full bg-base border border-line focus:border-accent px-3 py-2 text-bone rounded-none" />
+          </div>
+          <div>
+            <label class="block text-sm text-muted mb-1">Texto del botón</label>
+            <input type="text" [(ngModel)]="borrador.textoBoton" [ngModelOptions]="{standalone: true}" placeholder="Saber más" class="w-full bg-base border border-line focus:border-accent px-3 py-2 text-bone rounded-none" />
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="borrador.tipo === 'encuesta'">
+        <div>
+          <label class="block text-sm text-muted mb-1">¿Cómo quieres mostrar el resultado?</label>
+          <select [(ngModel)]="borrador.tipoResultado" [ngModelOptions]="{standalone: true}" class="w-full bg-base border border-line focus:border-accent px-3 py-2 text-bone rounded-none">
+            <option value="tabla">Tabla (quien responde escribe su propia respuesta)</option>
+            <option value="grafico">Gráfico (quien responde elige entre opciones)</option>
+          </select>
+        </div>
+
+        <div *ngIf="borrador.tipoResultado === 'grafico'">
+          <label class="block text-sm text-muted mb-1">Tipo de gráfico</label>
+          <select [(ngModel)]="borrador.tipoGrafico" [ngModelOptions]="{standalone: true}" class="w-full bg-base border border-line focus:border-accent px-3 py-2 text-bone rounded-none">
+            <option value="barras">Barras</option>
+            <option value="circular">Circular</option>
+            <option value="lineas">Líneas</option>
+            <option value="histograma">Histograma</option>
+            <option value="dispersion">Diagrama de dispersión</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm text-muted mb-1">¿Cuántas preguntas quieres poner?</label>
+          <input type="number" min="1" max="20" [(ngModel)]="borrador.numeroPreguntas" [ngModelOptions]="{standalone: true}" (ngModelChange)="ajustarNumeroPreguntas()" class="w-32 bg-base border border-line focus:border-accent px-3 py-2 text-bone rounded-none" />
+        </div>
+
+        <div *ngFor="let pregunta of borrador.preguntas; let i = index" class="border border-line bg-base p-4 space-y-3">
+          <p class="text-sm text-muted">Pregunta {{ i + 1 }}</p>
+          <input type="text" [(ngModel)]="pregunta.texto" [ngModelOptions]="{standalone: true}" placeholder="Texto de la pregunta" class="w-full bg-surface border border-line focus:border-accent px-3 py-2 text-bone rounded-none" />
+
+          <div *ngIf="borrador.tipoResultado === 'grafico'" class="space-y-2">
+            <label class="block text-xs text-muted">Opciones de respuesta</label>
+            <div *ngFor="let opcion of pregunta.opciones; let iOpcion = index; trackBy: trackByIndex" class="flex items-center gap-2">
+              <input
+                type="text"
+                [(ngModel)]="pregunta.opciones[iOpcion]"
+                [ngModelOptions]="{standalone: true}"
+                [placeholder]="'Opción ' + (iOpcion + 1)"
+                class="flex-1 bg-surface border border-line focus:border-accent px-3 py-2 text-bone rounded-none"
+              />
+              <button *ngIf="pregunta.opciones.length > 2" type="button" (click)="quitarOpcion(i, iOpcion)" class="text-red-600 hover:underline text-sm whitespace-nowrap">Quitar</button>
+            </div>
+            <button type="button" (click)="agregarOpcion(i)" class="text-sm text-accent hover:text-accentDark underline underline-offset-2">+ Agregar otra opción</button>
+          </div>
+
+          <p *ngIf="borrador.tipoResultado === 'tabla'" class="text-xs text-muted">
+            Quien responda verá un cuadro de texto libre para escribir su respuesta a esta pregunta.
+          </p>
+        </div>
+
+        <div>
+          <label class="block text-sm text-muted mb-1">Fecha y hora límite (opcional)</label>
+          <input type="datetime-local" [(ngModel)]="borrador.fechaLimite" [ngModelOptions]="{standalone: true}" class="w-full sm:w-64 bg-base border border-line focus:border-accent px-3 py-2 text-bone rounded-none" />
+          <p class="text-xs text-muted mt-1">Después de esta fecha, la encuesta deja de aceptar respuestas y solo muestra los resultados. Déjalo vacío para que nunca cierre.</p>
+        </div>
+      </ng-container>
+
+      <div class="flex gap-3 pt-2">
+        <button type="button" [disabled]="guardandoSeccion" (click)="guardarSeccion(permisos.aprobarContenido)" class="bg-accent hover:bg-accentDark disabled:opacity-60 text-white text-sm font-medium px-6 py-2.5 transition-colors">
+          {{ guardandoSeccion ? 'Guardando…' : 'Guardar sección' }}
+        </button>
+        <button type="button" (click)="cancelarAsistente()" class="text-sm text-muted hover:underline">Cancelar</button>
+      </div>
+    </div>
+
+    <!-- Lista de secciones existentes -->
+    <div *ngIf="!pasoCreacion" class="space-y-4 max-w-2xl mt-2">
+      <div *ngFor="let seccion of (secciones$ | async)" [id]="'seccion-' + seccion.id" class="bg-surface border border-line p-4 scroll-mt-6">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2 mb-1 flex-wrap">
+              <span class="text-xs uppercase tracking-wide text-accent">{{ tipoDe(seccion) === 'encuesta' ? 'Encuesta' : 'Informativa' }}</span>
+              <span
+                class="text-xs px-2 py-0.5"
+                [class.bg-accent]="estadoDe(seccion) === 'pendiente'"
+                [class.text-white]="estadoDe(seccion) === 'pendiente'"
+                [class.text-muted]="estadoDe(seccion) !== 'pendiente'"
+              >{{ estadoDe(seccion) === 'pendiente' ? 'Pendiente' : 'Aprobada' }}</span>
+              <span class="text-xs text-muted">{{ seccion.autorCorreo }}</span>
+            </div>
+            <p class="font-display text-lg font-medium">{{ seccion.titulo }}</p>
+            <p *ngIf="tipoDe(seccion) === 'informativa'" class="text-muted text-sm mt-1">{{ seccion.contenido }}</p>
+            <p *ngIf="tipoDe(seccion) === 'encuesta'" class="text-muted text-sm mt-1">{{ seccion.preguntas?.length || 0 }} pregunta(s)</p>
+          </div>
+          <div class="flex flex-col items-end gap-2 whitespace-nowrap">
+            <button *ngIf="permisos.aprobarContenido && estadoDe(seccion) === 'pendiente'" type="button" (click)="aprobarSeccion(seccion)" class="text-sm text-accent hover:underline">Aprobar</button>
+            <button *ngIf="puedeEditar(permisos, seccion.autorCorreo)" type="button" (click)="empezarEdicionSeccion(seccion)" class="text-sm text-accent hover:underline">Editar</button>
+            <button *ngIf="puedeEditar(permisos, seccion.autorCorreo)" type="button" (click)="eliminarSeccion(seccion)" class="text-sm text-red-600 hover:underline">Eliminar</button>
+          </div>
+        </div>
+      </div>
+      <p *ngIf="(secciones$ | async)?.length === 0" class="text-muted text-sm">Aún no hay secciones adicionales.</p>
+    </div>
+  </section>
+</main>
+
+<!-- ============ MODAL: crear/editar foto de galería ============ -->
+<div *ngIf="modalGaleriaAbierto" class="fixed inset-0 bg-black/50 flex items-center justify-center z-40 px-4">
+  <div class="bg-surface border border-line w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
+    <h3 class="font-display text-lg font-medium mb-4">{{ indiceEditandoFoto === null ? 'Agregar foto' : 'Editar foto' }}</h3>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm text-muted mb-1">Subir imagen desde tu equipo</label>
+        <input type="file" accept="image/*" (change)="onArchivoSeleccionado($event)" class="w-full text-sm" />
+      </div>
+      <p class="text-xs text-muted text-center">— o pega una URL —</p>
+      <div>
+        <label class="block text-sm text-muted mb-1">URL de la imagen</label>
+        <input type="text" [(ngModel)]="borradorFoto.url" [ngModelOptions]="{standalone: true}" class="w-full bg-base border border-line focus:border-accent px-3 py-2 text-bone rounded-none" />
+      </div>
+      <div>
+        <label class="block text-sm text-muted mb-1">Descripción</label>
+        <input type="text" [(ngModel)]="borradorFoto.descripcion" [ngModelOptions]="{standalone: true}" class="w-full bg-base border border-line focus:border-accent px-3 py-2 text-bone rounded-none" />
+      </div>
+    </div>
+    <div class="flex justify-end gap-3 mt-6">
+      <button type="button" (click)="cerrarModalGaleria()" class="text-sm text-muted hover:underline px-4 py-2">Cancelar</button>
+      <button type="button" [disabled]="subiendoFoto" (click)="guardarFotoModal()" class="bg-accent hover:bg-accentDark disabled:opacity-60 text-white text-sm font-medium px-5 py-2 transition-colors">
+        {{ subiendoFoto ? 'Guardando…' : 'Guardar' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: confirmar eliminar foto ============ -->
+<div *ngIf="modalEliminarFotoIndice !== null" class="fixed inset-0 bg-black/50 flex items-center justify-center z-40 px-4">
+  <div class="bg-surface border border-line w-full max-w-sm p-6 text-center">
+    <h3 class="font-display text-lg font-medium mb-2">¿Eliminar esta foto?</h3>
+    <p class="text-sm text-muted mb-6">Esta acción no se puede deshacer.</p>
+    <div class="flex justify-center gap-3">
+      <button type="button" (click)="cerrarModalEliminarFoto()" class="text-sm text-muted hover:underline px-4 py-2">Cancelar</button>
+      <button type="button" (click)="confirmarEliminarFoto()" class="bg-red-600 hover:bg-red-700 text-white text-sm font-medium px-5 py-2 transition-colors">Eliminar</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,84 @@
+<app-admin-nav></app-admin-nav>
+
+<main *ngIf="auth.permisos$ | async as permisos" class="bg-base min-h-screen px-4 sm:px-6 md:px-16 pb-16 text-bone">
+  <h1 class="font-display text-2xl sm:text-3xl md:text-4xl font-medium mb-8">Panel de control</h1>
+
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
+    <div class="bg-surface border border-line p-6">
+      <p class="text-sm text-muted mb-1">Total de firmantes</p>
+      <p class="font-display text-3xl font-medium">{{ (totalFirmas$ | async) ?? 0 }}</p>
+    </div>
+    <div class="bg-surface border border-line p-6">
+      <p class="text-sm text-muted mb-1">Encuestas activas</p>
+      <p class="font-display text-3xl font-medium">{{ (encuestasActivas$ | async)?.length ?? 0 }}</p>
+    </div>
+    <div class="bg-surface border border-line p-6">
+      <p class="text-sm text-muted mb-1">Encuestas cerradas</p>
+      <p class="font-display text-3xl font-medium">{{ (encuestasCerradas$ | async)?.length ?? 0 }}</p>
+    </div>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-6">
+    <!-- Encuestas pendientes -->
+    <section class="bg-surface border border-line p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-display text-lg font-medium">Encuestas pendientes</h2>
+        <a *ngIf="permisos.verContenidoAdmin" [routerLink]="['/admin/contenido']" [queryParams]="{ tab: 'secciones' }" class="text-sm text-accent hover:underline">Ver todas</a>
+      </div>
+      <div class="space-y-3">
+        <a
+          *ngFor="let encuesta of (encuestasActivas$ | async)"
+          [routerLink]="['/admin/contenido']"
+          [queryParams]="{ tab: 'secciones', seccion: encuesta.id }"
+          class="block border border-line p-3 hover:border-accent transition-colors"
+        >
+          <p class="font-medium">{{ encuesta.titulo }}</p>
+          <p class="text-xs text-muted mt-1">
+            {{ encuesta.fechaLimite ? ('Cierra el ' + (encuesta.fechaLimite | date: 'dd/MM/yyyy HH:mm')) : 'Sin fecha límite' }}
+          </p>
+        </a>
+        <p *ngIf="(encuestasActivas$ | async)?.length === 0" class="text-sm text-muted">No hay encuestas activas por ahora.</p>
+      </div>
+    </section>
+
+    <!-- Últimas noticias -->
+    <section class="bg-surface border border-line p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-display text-lg font-medium">Últimas noticias publicadas</h2>
+        <a *ngIf="permisos.verContenidoAdmin" [routerLink]="['/admin/contenido']" [queryParams]="{ tab: 'noticias' }" class="text-sm text-accent hover:underline">Ver todas</a>
+      </div>
+      <div class="space-y-3">
+        <ng-container *ngIf="permisos.verContenidoAdmin; else sinAccesoNoticias">
+          <a
+            *ngFor="let noticia of (ultimasNoticias$ | async)"
+            [routerLink]="['/admin/contenido']"
+            [queryParams]="{ tab: 'noticias', noticia: noticia.id }"
+            class="block border border-line p-3 hover:border-accent transition-colors"
+          >
+            <p class="font-medium">{{ noticia.titulo }}</p>
+            <p class="text-xs text-muted mt-1">{{ noticia.fecha }}</p>
+          </a>
+          <p *ngIf="(ultimasNoticias$ | async)?.length === 0" class="text-sm text-muted">Aún no hay noticias publicadas.</p>
+        </ng-container>
+        <ng-template #sinAccesoNoticias>
+          <p class="text-sm text-muted">Aún no hay noticias publicadas.</p>
+        </ng-template>
+      </div>
+    </section>
+
+    <!-- Actividad reciente: solo visible para quien puede ver el historial -->
+    <section *ngIf="permisos.verHistorial" class="bg-surface border border-line p-6 md:col-span-2">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-display text-lg font-medium">Novedades recientes</h2>
+        <a routerLink="/admin/historial" class="text-sm text-accent hover:underline">Ver historial completo</a>
+      </div>
+      <div class="divide-y divide-line">
+        <div *ngFor="let registro of (actividadReciente$ | async)" class="py-2 flex flex-wrap items-center justify-between gap-2 text-sm">
+          <span>{{ registro.accion }} — <span class="text-muted">{{ registro.detalle }}</span></span>
+          <span class="text-xs text-muted whitespace-nowrap">{{ registro.correo }}</span>
+        </div>
+        <p *ngIf="(actividadReciente$ | async)?.length === 0" class="text-sm text-muted py-2">Aún no hay actividad registrada.</p>
+      </div>
+    </section>
+  </div>
+</main>

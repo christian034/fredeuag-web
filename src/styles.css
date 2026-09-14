@@ -1,0 +1,140 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Tema claro — colores reales de la identidad FREDEUAG (azul marino #202054, rojo #AA0225) */
+  --color-base: 244 246 249;
+  --color-surface: 255 255 255;
+  --color-surface-alt: 237 240 245;
+  --color-line: 221 226 234;
+  --color-bone: 32 32 84;
+  --color-muted: 92 100 120;
+  --color-accent: 170 2 37;
+  --color-accent-dark: 122 1 25;
+}
+
+.dark {
+  /* Tema oscuro — mismo rojo institucional, fondo en el azul marino de marca */
+  --color-base: 18 18 46;
+  --color-surface: 28 28 68;
+  --color-surface-alt: 36 36 88;
+  --color-line: 58 58 107;
+  --color-bone: 244 244 248;
+  --color-muted: 167 167 199;
+  --color-accent: 214 41 63;
+  --color-accent-dark: 170 2 37;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  scroll-behavior: smooth;
+  transition: background-color 0.2s ease;
+  background-color: rgb(var(--color-base));
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  color: rgb(var(--color-bone));
+}
+
+/* Foco visible accesible en toda la app */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid rgb(var(--color-accent));
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/*
+ * Estilos para el contenido que viene del editor de texto (CKEditor), usados
+ * en la página pública de cada noticia. Sin esto, cosas como alinear una
+ * imagen a la izquierda/derecha (con el texto rodeándola) o cambiarle el
+ * tamaño se veían bien DENTRO del editor pero distinto al publicar, porque
+ * esas son clases propias de CKEditor que solo tienen efecto visual si existe
+ * también el CSS que las define — y la página pública nunca lo tenía.
+ *
+ * Estas reglas son una transcripción EXACTA de las oficiales de CKEditor5
+ * (ckeditor5-image/theme/imagestyle.css y su hoja de estilos de contenido),
+ * no una reconstrucción aproximada — así el resultado publicado coincide
+ * con lo que se ve dentro del editor, tal cual. Van en el CSS global (no
+ * como estilos del componente) porque el contenido se inserta con
+ * [innerHTML], fuera del alcance normal del encapsulamiento de Angular.
+ */
+.contenido-noticia {
+  --ck-image-style-spacing: 1.5em;
+}
+.contenido-noticia .image {
+  clear: both;
+  display: table;
+  margin: 0.9em auto;
+  min-width: 50px;
+  text-align: center;
+}
+.contenido-noticia .image.image_resized {
+  max-width: 100%;
+  display: block;
+  box-sizing: border-box;
+}
+.contenido-noticia .image.image_resized img {
+  width: 100%;
+}
+.contenido-noticia .image.image_resized > figcaption {
+  display: block;
+}
+.contenido-noticia .image-style-align-left {
+  float: left;
+  margin-right: var(--ck-image-style-spacing);
+}
+.contenido-noticia .image-style-align-right {
+  float: right;
+  margin-left: var(--ck-image-style-spacing);
+  max-width: 50%;
+}
+.contenido-noticia .image-style-align-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+.contenido-noticia .image-style-side {
+  float: right;
+  margin-left: var(--ck-image-style-spacing);
+  max-width: 50%;
+}
+.contenido-noticia .image > figcaption {
+  display: table-caption;
+  caption-side: bottom;
+  word-break: break-word;
+  color: rgb(var(--color-muted));
+  background-color: transparent;
+  padding: 0.6em;
+  font-size: 0.75em;
+  outline-offset: -1px;
+  text-align: center;
+}
+.contenido-noticia blockquote {
+  border-left: 3px solid rgb(var(--color-accent));
+  padding: 0.4em 0 0.4em 1.2em;
+  margin: 1.2em 0;
+  font-style: italic;
+  color: rgb(var(--color-muted));
+}
+.contenido-noticia a {
+  color: rgb(var(--color-accent));
+  text-decoration: underline;
+}
+.contenido-noticia::after {
+  content: '';
+  display: block;
+  clear: both;
+}

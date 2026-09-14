@@ -1,0 +1,198 @@
+{
+  "hash": "6c6623a5",
+  "configHash": "49d16901",
+  "lockfileHash": "cf326577",
+  "browserHash": "fcfd30c2",
+  "optimized": {
+    "@angular/common": {
+      "src": "../../../../../../node_modules/@angular/common/fesm2022/common.mjs",
+      "file": "@angular_common.js",
+      "fileHash": "46d48ccf",
+      "needsInterop": false
+    },
+    "@angular/core": {
+      "src": "../../../../../../node_modules/@angular/core/fesm2022/core.mjs",
+      "file": "@angular_core.js",
+      "fileHash": "0bcafd7d",
+      "needsInterop": false
+    },
+    "@angular/fire/app-check": {
+      "src": "../../../../../../node_modules/@angular/fire/fesm2022/angular-fire-app-check.mjs",
+      "file": "@angular_fire_app-check.js",
+      "fileHash": "ec26bd29",
+      "needsInterop": false
+    },
+    "@angular/fire/app": {
+      "src": "../../../../../../node_modules/@angular/fire/fesm2022/angular-fire-app.mjs",
+      "file": "@angular_fire_app.js",
+      "fileHash": "7f3c2777",
+      "needsInterop": false
+    },
+    "@angular/fire/auth": {
+      "src": "../../../../../../node_modules/@angular/fire/fesm2022/angular-fire-auth.mjs",
+      "file": "@angular_fire_auth.js",
+      "fileHash": "e15c44a3",
+      "needsInterop": false
+    },
+    "@angular/fire/firestore": {
+      "src": "../../../../../../node_modules/@angular/fire/fesm2022/angular-fire-firestore.mjs",
+      "file": "@angular_fire_firestore.js",
+      "fileHash": "16076da2",
+      "needsInterop": false
+    },
+    "@angular/fire/storage": {
+      "src": "../../../../../../node_modules/@angular/fire/fesm2022/angular-fire-storage.mjs",
+      "file": "@angular_fire_storage.js",
+      "fileHash": "37211c35",
+      "needsInterop": false
+    },
+    "@angular/forms": {
+      "src": "../../../../../../node_modules/@angular/forms/fesm2022/forms.mjs",
+      "file": "@angular_forms.js",
+      "fileHash": "40a3d99e",
+      "needsInterop": false
+    },
+    "@angular/platform-browser": {
+      "src": "../../../../../../node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs",
+      "file": "@angular_platform-browser.js",
+      "fileHash": "c725980f",
+      "needsInterop": false
+    },
+    "@angular/router": {
+      "src": "../../../../../../node_modules/@angular/router/fesm2022/router.mjs",
+      "file": "@angular_router.js",
+      "fileHash": "d95b99eb",
+      "needsInterop": false
+    },
+    "@ckeditor/ckeditor5-angular": {
+      "src": "../../../../../../node_modules/@ckeditor/ckeditor5-angular/fesm2022/ckeditor-ckeditor5-angular.mjs",
+      "file": "@ckeditor_ckeditor5-angular.js",
+      "fileHash": "6859bbce",
+      "needsInterop": false
+    },
+    "chart.js/auto": {
+      "src": "../../../../../../node_modules/chart.js/auto/auto.js",
+      "file": "chart__js_auto.js",
+      "fileHash": "7e3695cf",
+      "needsInterop": false
+    },
+    "ckeditor5": {
+      "src": "../../../../../../node_modules/ckeditor5/dist/ckeditor5.js",
+      "file": "ckeditor5.js",
+      "fileHash": "7785d28c",
+      "needsInterop": false
+    },
+    "firebase/app": {
+      "src": "../../../../../../node_modules/firebase/app/dist/esm/index.esm.js",
+      "file": "firebase_app.js",
+      "fileHash": "100cddad",
+      "needsInterop": false
+    },
+    "firebase/auth": {
+      "src": "../../../../../../node_modules/firebase/auth/dist/esm/index.esm.js",
+      "file": "firebase_auth.js",
+      "fileHash": "b7036462",
+      "needsInterop": false
+    },
+    "ng2-charts": {
+      "src": "../../../../../../node_modules/ng2-charts/fesm2022/ng2-charts.mjs",
+      "file": "ng2-charts.js",
+      "fileHash": "3e0821d6",
+      "needsInterop": false
+    },
+    "rxjs": {
+      "src": "../../../../../../node_modules/rxjs/dist/esm5/index.js",
+      "file": "rxjs.js",
+      "fileHash": "093fdf85",
+      "needsInterop": false
+    },
+    "rxjs/operators": {
+      "src": "../../../../../../node_modules/rxjs/dist/esm5/operators/index.js",
+      "file": "rxjs_operators.js",
+      "fileHash": "73c799a1",
+      "needsInterop": false
+    },
+    "xlsx": {
+      "src": "../../../../../../node_modules/xlsx/xlsx.mjs",
+      "file": "xlsx.js",
+      "fileHash": "433597f0",
+      "needsInterop": false
+    },
+    "zone.js": {
+      "src": "../../../../../../node_modules/zone.js/fesm2015/zone.js",
+      "file": "zone__js.js",
+      "fileHash": "a79ae427",
+      "needsInterop": true
+    }
+  },
+  "chunks": {
+    "angular-fire-app-DXJ_OEJm": {
+      "file": "angular-fire-app-DXJ_OEJm.js",
+      "isDynamicEntry": false
+    },
+    "angular-fire-app-check-CTr64DsK": {
+      "file": "angular-fire-app-check-CTr64DsK.js",
+      "isDynamicEntry": false
+    },
+    "angular-fire-auth-DFzzNuQT": {
+      "file": "angular-fire-auth-DFzzNuQT.js",
+      "isDynamicEntry": false
+    },
+    "asyncToGenerator-B0cJ8fiL": {
+      "file": "asyncToGenerator-B0cJ8fiL.js",
+      "isDynamicEntry": false
+    },
+    "chart-BE2gdqdT": {
+      "file": "chart-BE2gdqdT.js",
+      "isDynamicEntry": false
+    },
+    "common-DMPRmAEJ": {
+      "file": "common-DMPRmAEJ.js",
+      "isDynamicEntry": false
+    },
+    "core-Cmi87fr7": {
+      "file": "core-Cmi87fr7.js",
+      "isDynamicEntry": false
+    },
+    "esm5-CHmRCD0e": {
+      "file": "esm5-CHmRCD0e.js",
+      "isDynamicEntry": false
+    },
+    "index.esm-BvLMCDoa": {
+      "file": "index.esm-BvLMCDoa.js",
+      "isDynamicEntry": false
+    },
+    "index.esm2017-DghwDOiZ": {
+      "file": "index.esm2017-DghwDOiZ.js",
+      "isDynamicEntry": false
+    },
+    "merge-COLS5Zyg": {
+      "file": "merge-COLS5Zyg.js",
+      "isDynamicEntry": false
+    },
+    "objectSpread2-C_IE-bIJ": {
+      "file": "objectSpread2-C_IE-bIJ.js",
+      "isDynamicEntry": false
+    },
+    "objectWithoutProperties-BqQcvDVf": {
+      "file": "objectWithoutProperties-BqQcvDVf.js",
+      "isDynamicEntry": false
+    },
+    "operators-CZF7lDkB": {
+      "file": "operators-CZF7lDkB.js",
+      "isDynamicEntry": false
+    },
+    "platform-browser-BpLnDK7n": {
+      "file": "platform-browser-BpLnDK7n.js",
+      "isDynamicEntry": false
+    },
+    "tslib.es6-COL127aV": {
+      "file": "tslib.es6-COL127aV.js",
+      "isDynamicEntry": false
+    },
+    "zipWith-BIPy9JuQ": {
+      "file": "zipWith-BIPy9JuQ.js",
+      "isDynamicEntry": false
+    }
+  }
+}

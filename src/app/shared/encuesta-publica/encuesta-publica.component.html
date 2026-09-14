@@ -1,0 +1,91 @@
+<div class="border border-line bg-surface p-6 md:p-8 transition-all duration-300 hover:border-accent hover:shadow-lg">
+  <div class="flex flex-wrap items-start justify-between gap-2 mb-6">
+    <h3 class="font-display text-xl md:text-2xl font-medium">{{ seccion.titulo }}</h3>
+    <span *ngIf="seccion.fechaLimite" class="text-xs text-muted whitespace-nowrap">
+      {{ cerrada ? 'Cerró el' : 'Cierra el' }} {{ seccion.fechaLimite | date: 'dd/MM/yyyy HH:mm' }}
+    </span>
+  </div>
+
+  <p *ngIf="cerrada && !yaVoto" class="text-sm text-muted mb-6">Esta encuesta ya cerró. Estos son los resultados finales:</p>
+
+  <!-- Formulario de votación -->
+  <form *ngIf="!yaVoto && !cerrada" (ngSubmit)="votar()" class="space-y-6">
+    <div *ngFor="let pregunta of seccion.preguntas; let iPregunta = index">
+      <p class="font-medium mb-3">{{ pregunta.texto }}</p>
+
+      <!-- Modo gráfico: elegir una opción -->
+      <div *ngIf="esModoGrafico" class="space-y-2">
+        <label
+          *ngFor="let opcion of pregunta.opciones; let iOpcion = index"
+          class="flex items-center gap-2 text-sm text-muted cursor-pointer border border-line px-3 py-2 transition-all duration-200 hover:border-accent hover:bg-base hover:text-bone"
+        >
+          <input
+            type="radio"
+            [name]="'pregunta-' + iPregunta"
+            [checked]="respuestasOpcion[iPregunta] === iOpcion"
+            (change)="elegirOpcion(iPregunta, iOpcion)"
+          />
+          {{ opcion }}
+        </label>
+      </div>
+
+      <!-- Modo tabla: respuesta de texto libre -->
+      <input
+        *ngIf="!esModoGrafico"
+        type="text"
+        [(ngModel)]="respuestasTexto[iPregunta]"
+        [name]="'texto-' + iPregunta"
+        placeholder="Escribe tu respuesta"
+        class="w-full bg-base border border-line focus:border-accent px-3 py-2 text-sm text-bone rounded-none"
+      />
+    </div>
+
+    <button
+      type="submit"
+      [disabled]="faltanRespuestas || enviando"
+      class="bg-accent hover:bg-accentDark disabled:opacity-50 text-white text-sm font-medium px-6 py-2.5 transition-colors"
+    >{{ enviando ? 'Enviando…' : 'Votar' }}</button>
+  </form>
+
+  <!-- Resultados -->
+  <div *ngIf="yaVoto || cerrada" class="space-y-8">
+    <p *ngIf="yaVoto && !cerrada" class="text-sm text-accent">Gracias por participar. Estos son los resultados hasta ahora:</p>
+
+    <div *ngFor="let pregunta of seccion.preguntas; let iPregunta = index">
+      <p class="font-medium mb-3">{{ pregunta.texto }}</p>
+
+      <!-- Resultado modo gráfico: tabla o chart, según se eligió al crear la encuesta -->
+      <ng-container *ngIf="esModoGrafico">
+        <table *ngIf="seccion.tipoResultado === 'tabla'" class="w-full text-sm border border-line">
+          <tbody class="divide-y divide-line">
+            <tr *ngFor="let opcion of pregunta.opciones; let iOpcion = index">
+              <td class="px-3 py-2">{{ opcion }}</td>
+              <td class="px-3 py-2 text-right text-muted">{{ conteosPorPregunta[iPregunta][iOpcion] ?? 0 }} voto(s)</td>
+            </tr>
+          </tbody>
+        </table>
+        <div *ngIf="seccion.tipoResultado === 'grafico'" class="max-w-md h-64">
+          <canvas baseChart [type]="configuracionGrafico(iPregunta).tipo" [data]="configuracionGrafico(iPregunta).datos"></canvas>
+        </div>
+        <p class="text-xs text-muted mt-2">Total: {{ totalVotosOpcion(iPregunta) }} voto(s)</p>
+      </ng-container>
+
+      <!-- Resultado modo tabla (respuestas de texto libre): solo visible para el equipo del panel -->
+      <ng-container *ngIf="!esModoGrafico">
+        <table *ngIf="auth.usuario$ | async" class="w-full text-sm border border-line">
+          <tbody class="divide-y divide-line">
+            <tr *ngFor="let respuesta of textosPorPregunta[iPregunta]">
+              <td class="px-3 py-2">{{ respuesta }}</td>
+            </tr>
+            <tr *ngIf="!textosPorPregunta[iPregunta]?.length">
+              <td class="px-3 py-2 text-muted">Aún no hay respuestas.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p *ngIf="!(auth.usuario$ | async)" class="text-sm text-muted">
+          Las respuestas de esta pregunta solo son visibles para el equipo organizador.
+        </p>
+      </ng-container>
+    </div>
+  </div>
+</div>

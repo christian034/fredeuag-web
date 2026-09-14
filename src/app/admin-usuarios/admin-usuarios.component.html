@@ -1,0 +1,131 @@
+<app-admin-nav></app-admin-nav>
+
+<main *ngIf="(auth.permisos$ | async) as permisos" class="bg-base min-h-screen px-6 md:px-16 pb-16 text-bone">
+  <ng-container *ngIf="(auth.rol$ | async) as miRol">
+
+  <h1 class="font-display text-3xl md:text-4xl font-medium mb-2">Usuarios</h1>
+  <p class="text-muted mb-10 max-w-2xl">
+    {{ permisos.gestionarUsuarios ? 'Crea cuentas nuevas y administra los roles de acceso al panel.' : (permisos.puedeAscenderRoles ? 'Puedes cambiar roles hasta tu propio rango.' : 'Lista de usuarios con acceso al panel.') }}
+  </p>
+
+  <!-- Formulario para crear una cuenta nueva: solo quien gestiona usuarios -->
+  <form *ngIf="permisos.gestionarUsuarios" [formGroup]="form" (ngSubmit)="crearUsuario()" class="max-w-lg bg-surface border border-line p-6 mb-10 space-y-4" novalidate>
+    <h2 class="font-display text-lg font-medium mb-1">Crear nuevo usuario</h2>
+    <p class="text-xs text-muted mb-2">
+      Se crea con el rol de menor privilegio (visor). Puedes cambiarlo después desde la tabla de abajo.
+    </p>
+
+    <div>
+      <label class="block text-sm text-muted mb-1">Usuario</label>
+      <input type="text" formControlName="usuario" class="w-full bg-base border border-line focus:border-accent px-4 py-3 text-bone rounded-none" />
+    </div>
+    <div>
+      <label class="block text-sm text-muted mb-1">Correo electrónico</label>
+      <input type="email" formControlName="correo" class="w-full bg-base border border-line focus:border-accent px-4 py-3 text-bone rounded-none" />
+    </div>
+    <div>
+      <label class="block text-sm text-muted mb-1">Contraseña</label>
+      <input type="password" formControlName="password" class="w-full bg-base border border-line focus:border-accent px-4 py-3 text-bone rounded-none" />
+    </div>
+
+    <p *ngIf="error" class="text-sm text-red-600">{{ error }}</p>
+    <p *ngIf="exito" class="text-sm text-accent">{{ exito }}</p>
+
+    <button
+      type="submit"
+      [disabled]="guardando"
+      class="bg-accent hover:bg-accentDark disabled:opacity-60 text-white text-base font-medium px-6 py-2.5 transition-colors"
+    >
+      {{ guardando ? 'Creando…' : 'Crear usuario' }}
+    </button>
+  </form>
+
+  <!-- Tabla de usuarios existentes -->
+  <div class="max-w-2xl">
+    <h2 class="font-display text-xl font-medium mb-4">Usuarios con acceso</h2>
+
+    <div class="divide-y divide-line border border-line bg-surface">
+      <div *ngFor="let u of (usuarios$ | async)" class="px-5 py-4">
+
+        <div *ngIf="editandoCorreo !== u.correo" class="flex flex-wrap items-center gap-4">
+          <div class="flex-1 min-w-[180px]">
+            <div class="flex items-center gap-2">
+              <p class="text-sm">{{ u.usuario || '(sin nombre)' }}</p>
+              <span
+                class="text-xs px-2 py-0.5"
+                [class.bg-accent]="!estaActivo(u)"
+                [class.text-white]="!estaActivo(u)"
+                [class.text-muted]="estaActivo(u)"
+              >{{ estaActivo(u) ? 'Activo' : 'Desactivado' }}</span>
+            </div>
+            <p class="text-xs text-muted">{{ u.correo }}</p>
+          </div>
+
+          <!-- El selector de rol solo aparece si puedo ascender roles Y tengo alcance sobre esta fila -->
+          <select
+            *ngIf="permisos.puedeAscenderRoles && puedeEditarFila(miRol, u.rol); else soloRolTexto"
+            [ngModel]="u.rol"
+            (ngModelChange)="cambiarRol(u, $event, miRol)"
+            [ngModelOptions]="{ standalone: true }"
+            class="bg-base border border-line focus:border-accent px-3 py-1.5 text-sm rounded-none"
+          >
+            <option *ngFor="let r of rolesAsignables(miRol)" [value]="r">{{ r }}</option>
+          </select>
+          <ng-template #soloRolTexto>
+            <span class="text-xs uppercase tracking-wide text-muted px-3 py-1.5 border border-line">{{ u.rol }}</span>
+          </ng-template>
+
+          <ng-container *ngIf="permisos.gestionarUsuarios">
+            <button type="button" (click)="empezarEdicionNombre(u)" class="text-sm text-accent hover:underline">Editar</button>
+            <button type="button" (click)="alternarActivo(u)" class="text-sm text-muted hover:text-accent hover:underline whitespace-nowrap">
+              {{ estaActivo(u) ? 'Desactivar' : 'Reactivar' }}
+            </button>
+            <button type="button" (click)="abrirModalEliminar(u)" class="text-sm text-red-600 hover:underline">Eliminar</button>
+          </ng-container>
+        </div>
+
+        <div *ngIf="editandoCorreo === u.correo" class="flex flex-wrap items-center gap-3">
+          <input
+            type="text"
+            [(ngModel)]="nombreEnEdicion"
+            [ngModelOptions]="{ standalone: true }"
+            placeholder="Nombre de usuario"
+            class="flex-1 min-w-[160px] bg-base border border-line focus:border-accent px-3 py-1.5 text-sm rounded-none"
+          />
+          <button type="button" (click)="guardarNombre(u)" class="text-sm text-accent hover:underline">Guardar</button>
+          <button type="button" (click)="cancelarEdicionNombre()" class="text-sm text-muted hover:underline">Cancelar</button>
+        </div>
+      </div>
+
+      <p *ngIf="(usuarios$ | async)?.length === 0" class="px-5 py-6 text-center text-muted text-sm">
+        Aún no hay usuarios registrados.
+      </p>
+    </div>
+
+    <p class="text-xs text-muted mt-4 max-w-lg">
+      <strong>Admin</strong> puede asignar cualquier rango, incluido admin. <strong>Fundador</strong> puede
+      asignar hasta su propio rango (no puede crear ni tocar cuentas admin).
+      <strong>Desactivar</strong> bloquea el acceso al panel de inmediato, pero se puede revertir en
+      cualquier momento. <strong>Eliminar</strong> quita el registro por completo (su cuenta de
+      correo/contraseña seguirá existiendo en Firebase, pero sin ningún rol asignado).
+    </p>
+  </div>
+
+  </ng-container>
+</main>
+
+<!-- Modal de confirmación para eliminar -->
+<div *ngIf="usuarioAEliminar" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+  <div class="bg-surface border border-line w-full max-w-sm p-6 text-center">
+    <h3 class="font-display text-lg font-medium mb-2">¿Eliminar este usuario?</h3>
+    <p class="text-sm text-muted mb-1">{{ usuarioAEliminar.usuario || usuarioAEliminar.correo }}</p>
+    <p class="text-sm text-muted mb-6">
+      Se quitará su registro de acceso por completo. Esta acción no se puede deshacer
+      (si solo quieres bloquearlo temporalmente, usa "Desactivar" en su lugar).
+    </p>
+    <div class="flex justify-center gap-3">
+      <button type="button" (click)="cerrarModalEliminar()" class="text-sm text-muted hover:underline px-4 py-2">Cancelar</button>
+      <button type="button" (click)="confirmarEliminar()" class="bg-red-600 hover:bg-red-700 text-white text-sm font-medium px-5 py-2 transition-colors">Eliminar</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,77 @@
+<app-site-nav></app-site-nav>
+
+<main class="relative isolate bg-base min-h-screen flex items-center justify-center px-6 py-14 text-bone" *ngIf="(contenido$ | async) as contenido">
+  <app-puntos-conectados></app-puntos-conectados>
+
+  <div class="relative w-full max-w-4xl border border-line bg-surface overflow-hidden grid md:grid-cols-2">
+
+    <!-- Retrato como acompañamiento visual, con degradado de marca y zoom al pasar el cursor -->
+    <div class="hidden md:block relative overflow-hidden group">
+      <div
+        class="absolute inset-0"
+        [style.background]="tema.oscuroActivo()
+          ? 'linear-gradient(135deg, #0d0d2e 0%, #161642 55%, #202054 100%)'
+          : 'linear-gradient(135deg, #eef0f5 0%, #f8f9fb 55%, #eef0f5 100%)'"
+      ></div>
+      <img
+        src="assets/marca/retrato-textura.png"
+        alt=""
+        class="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
+        [style.opacity]="tema.oscuroActivo() ? 0.85 : 1"
+        [style.mix-blend-mode]="tema.oscuroActivo() ? 'luminosity' : 'normal'"
+      />
+    </div>
+
+    <!-- Información de contacto -->
+    <div class="p-8 md:p-12 flex flex-col justify-center text-center md:text-left">
+      <p class="text-accent text-sm font-medium mb-2 tracking-wide">Escríbenos</p>
+      <h1 class="font-display text-3xl md:text-4xl font-medium mb-6">Contacto</h1>
+
+      <p class="text-muted text-base leading-relaxed mb-8">{{ contenido.contacto.descripcion }}</p>
+
+      <div class="mb-8">
+        <p class="text-sm text-muted mb-3">Síguenos en redes sociales</p>
+        <div class="flex gap-4 justify-center md:justify-start">
+          <a
+            *ngIf="contenido.contacto.facebook"
+            [href]="contenido.contacto.facebook"
+            target="_blank"
+            rel="noopener"
+            aria-label="Facebook del movimiento"
+            class="w-11 h-11 flex items-center justify-center rounded-full border border-line text-muted hover:text-white hover:bg-accent hover:border-accent hover:scale-110 transition-all duration-200"
+          >
+            <svg viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor"><path d="M22 12.06C22 6.51 17.52 2 12 2S2 6.51 2 12.06c0 5 3.66 9.15 8.44 9.94v-7.03H7.9v-2.9h2.54V9.85c0-2.5 1.49-3.89 3.78-3.89 1.1 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.44 2.9h-2.34V22c4.78-.79 8.44-4.94 8.44-9.94Z"/></svg>
+          </a>
+          <a
+            *ngIf="contenido.contacto.instagram"
+            [href]="contenido.contacto.instagram"
+            target="_blank"
+            rel="noopener"
+            aria-label="Instagram del movimiento"
+            class="w-11 h-11 flex items-center justify-center rounded-full border border-line text-muted hover:text-white hover:bg-accent hover:border-accent hover:scale-110 transition-all duration-200"
+          >
+            <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <a
+            *ngIf="contenido.contacto.x"
+            [href]="contenido.contacto.x"
+            target="_blank"
+            rel="noopener"
+            aria-label="X del movimiento"
+            class="w-11 h-11 flex items-center justify-center rounded-full border border-line text-muted hover:text-white hover:bg-accent hover:border-accent hover:scale-110 transition-all duration-200"
+          >
+            <svg viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23.3 22h-7l-5.5-7.2L4.5 22H1.4l8.1-9.3L1 2h7.2l5 6.6L18.9 2Zm-1.2 18h1.7L7.4 4H5.6l12.1 16Z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <p class="text-sm text-muted mb-1">Correo electrónico</p>
+        <a [href]="'mailto:' + contenido.contacto.correo" class="text-lg hover:text-accent transition-colors">
+          {{ contenido.contacto.correo }}
+        </a>
+      </div>
+    </div>
+
+  </div>
+</main>
