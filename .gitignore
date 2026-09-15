@@ -1,6 +1,12 @@
 # Dependencias — se reinstalan con "npm install", no deben subirse
 /node_modules
 
+# El lockfile se genera distinto entre Windows y Linux para paquetes con
+# binarios nativos (esbuild, rollup) — lo excluimos para que cada ambiente
+# (tu computadora, Cloudflare) resuelva sus propias versiones correctas al
+# instalar, en vez de forzar exactamente las mismas que Windows generó.
+package-lock.json
+
 # Compilación
 /dist
 /tmp
